@@ -74,6 +74,7 @@ def build_binaries():
     """Run the build_binaries.py script."""
     print("Running build_binaries.py")
 
+    """
     # copy the script (and various libraries used by the script) as it
     # changes git branch, which can change the script while running
     for thing in [
@@ -91,10 +92,11 @@ def build_binaries():
     if util.run_cmd("./build_binaries.py", directory=util.reltopdir('.')) != 0:
         print("Failed build_binaries.py")
         return False
+    """
 
 
     # Record which builds failed from the SQL DB created by build_binaries.py
-    conn = sqlite3.connect("IDK")
+    conn = sqlite3.connect("../buildlogs/build_binaries_history.sqlite")
     c = conn.cursor()
 
     # Get the latest hash
