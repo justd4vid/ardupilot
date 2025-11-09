@@ -116,15 +116,20 @@ def build_binaries():
     failed = c.fetchall()
     conn.close()
 
-    for tag, vehicle, board, frame in failed:
-        html_status = (
-            f'<span class="failed-text">FAILED</span> '
-            f'[{tag}.{vehicle}.{board}] '
-            f'Frame: {frame}'
-        )
-        results.add('FAILED BUILD',
-                    html_status,
+    if not failed:
+        results.add('BUILD BINARIES',
+                    '<span class="passed-text">All builds succeeded.</span>',
                     opts.timeout)
+    else:
+        for tag, vehicle, board, frame in failed:
+            html_status = (
+                f'<span class="failed-text">FAILED</span> '
+                f'[{tag}.{vehicle}.{board}] '
+                f'Frame: {frame}'
+            )
+            results.add('BUILD BINARIES',
+                        html_status,
+                        opts.timeout)
         
 
     return True
