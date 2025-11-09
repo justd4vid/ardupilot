@@ -19,6 +19,7 @@ import subprocess
 import sys
 import time
 import traceback
+import sqlite3
 
 import blimp
 import rover
@@ -90,6 +91,42 @@ def build_binaries():
     if util.run_cmd("./build_binaries.py", directory=util.reltopdir('.')) != 0:
         print("Failed build_binaries.py")
         return False
+
+
+    # Record which builds failed from the SQL DB created by build_binaries.py
+    conn = sqlite3.connect("IDK")
+    c = conn.cursor()
+
+    # Get the latest hash
+    c.execute("""SELECT hash 
+                 FROM build 
+                 WHERE start_time = (SELECT MAX(start_time) FROM build)""")
+    row = c.fetchone()
+    if not row:
+        print("Failed fetching results from build_binaries.py SQL DB.")
+        return False
+    latest_hash = row[0]
+
+    # Query all failed builds with that hash
+    c.execute("""
+             SELECT tag, vehicle, board, frame 
+             FROM build 
+             WHERE AND hash = ? AND bss is NULL
+             """, (latest_hash,))
+    failed = c.fetchall()
+    conn.close()
+
+    for tag, vehicle, board, frame in failed:
+        html_status = (
+            f'<span class="failed-text">FAILED</span> '
+            f'[{tag}.{vehicle}.{board}] '
+            f'Frame: {frame}'
+        )
+        results.add('FAILED BUILD',
+                    html_status,
+                    opts.timeout)
+        
+
     return True
 
 

@@ -251,7 +251,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     board_list = BoardList()
     target = args.target
-    if target == "AP_Periph":
+    print("SpeedyBeeF405WING")
+    """ if target == "AP_Periph":
         blist = board_list.find_ap_periph_boards()
     else:
         blist = board_list.find_autobuild_boards(target)
@@ -260,4 +261,4 @@ if __name__ == '__main__':
         for b in blist:
             print(b)
     else:
-        print(blist)
+        print(blist) """
